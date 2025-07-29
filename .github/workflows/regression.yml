@@ -1,10 +1,6 @@
 name: TestRegression
 
 on:
-  #push: {}
-#  schedule:
-#    - cron: '0 22 * * *'
-
   workflow_dispatch:
     inputs:
       environment:
@@ -16,35 +12,50 @@ on:
         default: "-m regression"
         description: "pytest additional arguments, e.g. `-m regression`"
 
-
 jobs:
   playwright:
     name: Regression tests
-    runs-on: ubuntu-24.04
-    container:
-      image: mcr.microsoft.com/playwright/python:v1.41.0-jammy
+    runs-on: ubuntu-24.04  # Используем свежую ОС
     env:
       AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
       AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
     strategy:
       matrix:
-        browser: [remote_chrome]
+        browser: [chromium]  # Изменено с remote_chrome на локальный браузер
     outputs:
-      env_name: ${{ steps.pytest.outputs.env_name }}
+      env_name: ${{ steps.set_env.outputs.env_name }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install dependencies
-        run: python3 -m pip install -r requirements.txt
-      - run: |
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils libatspi2.0-0 libappindicator3-1 libsecret-1-0 libgbm-dev
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+          python3 -m playwright install --with-deps chromium
+
+      - name: Set environment variables
+        id: set_env
+        run: |
           if [ "${{github.event_name}}" = "schedule" ]; then
-            export args="-m regression"
-            export ENV="prod"
+            args="-m regression"
+            ENV="prod"
           else
-            export ENV='${{github.event.inputs.environment}}'
-            export args='${{github.event.inputs.arguments}}'
+            ENV='${{github.event.inputs.environment}}'
+            args='${{github.event.inputs.arguments}}'
           fi
-            echo "::set-output name=env_name::${ENV:-prod}"
-            pytest ${args} --bn ${{ matrix.browser }}
+          echo "env_name=$ENV" >> $GITHUB_OUTPUT
+          echo "ARGS=$args" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }}
