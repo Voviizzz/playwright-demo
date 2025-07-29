@@ -20,7 +20,7 @@ on:
 jobs:
   playwright:
     name: Regression tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       image: mcr.microsoft.com/playwright/python:v1.41.0-jammy
     env:
