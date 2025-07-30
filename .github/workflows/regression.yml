@@ -13,9 +13,7 @@ on:
 jobs:
   playwright:
     name: Regression tests
-    # КРИТИЧЕСКИ ВАЖНО: явно указываем Ubuntu 24.04
     runs-on: ubuntu-24.04
-    
     env:
       AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
       AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
@@ -33,20 +31,16 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 \
-          libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
-          libxrandr2 libgbm1 libasound2 libpango-1.0-0 libcairo2
+      - name: Install Playwright system dependencies
+        uses: microsoft/playwright-github-action@v1
+        with:
+          browsers: chromium
 
       - name: Install Python dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
-          # Явная установка Playwright
           pip install playwright pytest-playwright
-          python -m playwright install --with-deps chromium
 
       - name: Run tests
         run: pytest ${{ inputs.arguments }} --bn ${{ matrix.browser }} --headless true
