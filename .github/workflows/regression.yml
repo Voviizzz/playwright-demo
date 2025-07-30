@@ -74,6 +74,10 @@ jobs:
           echo "ARGS=$args" >> $GITHUB_ENV
           echo "env_name=$ENV" >> $GITHUB_OUTPUT
 
+      - name: Test site availability
+        run: |
+          curl -I https://www.saucedemo.com/
+          curl -I https://www.saucedemo.com/inventory.html
       - name: Run tests
         run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }}
         env:
