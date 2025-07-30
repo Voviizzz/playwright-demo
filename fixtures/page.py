@@ -4,7 +4,7 @@ from playwright.sync_api import Browser, BrowserContext, Page, sync_playwright
 def pytest_addoption(parser):
     """Пользовательские опции командной строки"""
     parser.addoption('--bn', action='store', default="chrome", help="Choose browser: chrome, remote_chrome or firefox")
-    parser.addoption('--h', action='store', default="False", help='Choose headless: True or False')  # Исправлено на строку
+    parser.addoption('--h', action='store', default="True", help='Choose headless: True or False')  # Исправлено на строку
     parser.addoption('--s', action='store', default="1920,1080", help='Size window: width,height')  # Исправлено на строку
     parser.addoption('--slow', action='store', default="200", help='Choose slow_mo for robot action')  # Исправлено на строку
     parser.addoption('--t', action='store', default="60000", help='Choose timeout')  # Исправлено на строку
