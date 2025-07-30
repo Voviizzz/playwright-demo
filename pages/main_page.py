@@ -4,6 +4,9 @@ from Locators.auth import Auth
 from Locators.auth import LogAuth
 from data.assertions import Assertions
 from playwright.sync_api import Page
+from data.environment import host
+import os
+
 
 class Main(Base):
     def __init__(self, page: Page) -> None:
