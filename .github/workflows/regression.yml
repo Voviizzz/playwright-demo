@@ -79,7 +79,7 @@ jobs:
           curl -I https://www.saucedemo.com/
           curl -I https://www.saucedemo.com/inventory.html
       - name: Run tests
-        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} --headless true
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} 
         env:
           ENV: ${{ env.ENV }}
           CI: "true"  # Явно помечаем CI окружение
