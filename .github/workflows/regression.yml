@@ -55,10 +55,26 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
           pip install playwright pytest-playwright
           python -m playwright install --with-deps chromium
 
+      - name: Set environment variables
+        id: set_env
+        run: |
+          if [ "${{github.event_name}}" = "schedule" ]; then
+            args="-m regression"
+            ENV="prod"
+          else
+            ENV='${{github.event.inputs.environment}}'
+            args='${{github.event.inputs.arguments}}'
+          fi
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "ARGS=$args" >> $GITHUB_ENV
+          echo "env_name=$ENV" >> $GITHUB_OUTPUT
+
       - name: Run tests
-        run: pytest ${{ inputs.arguments }} --bn ${{ matrix.browser }} 
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} --headless true
+        env:
+          ENV: ${{ env.ENV }}  # Ключевая строка
