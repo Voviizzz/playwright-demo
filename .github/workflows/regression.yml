@@ -84,12 +84,3 @@ jobs:
           ENV: ${{ env.ENV }}
           AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
           AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-artifacts
-          path: |
-            *.png
-            *.har
-            *.log
