@@ -21,7 +21,7 @@ jobs:
       AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
     strategy:
       matrix:
-        browser: [remote_chrome]  # Изменено с remote_chrome на локальный браузер
+        browser: [chromium]  # Изменено с remote_chrome на локальный браузер
     outputs:
       env_name: ${{ steps.set_env.outputs.env_name }}
     steps:
