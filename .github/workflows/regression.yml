@@ -80,10 +80,3 @@ jobs:
           ENV: ${{ env.ENV }}
           AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
           AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
-
-      - name: Upload screenshots on failure
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: error-screenshots
-          path: '*.png'
