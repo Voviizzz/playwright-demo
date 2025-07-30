@@ -75,6 +75,15 @@ jobs:
           echo "env_name=$ENV" >> $GITHUB_OUTPUT
 
       - name: Run tests
-        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} 
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} --headless true
         env:
-          ENV: ${{ env.ENV }}  # Ключевая строка
+          ENV: ${{ env.ENV }}
+          AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
+          AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: error-screenshots
+          path: '*.png'
