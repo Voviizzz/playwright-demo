@@ -75,7 +75,7 @@ jobs:
           echo "env_name=$ENV" >> $GITHUB_OUTPUT
 
       - name: Run tests
-        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} --headless true
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }}
         env:
           ENV: ${{ env.ENV }}
           AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
