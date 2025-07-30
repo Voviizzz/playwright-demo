@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Playwright system dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -47,7 +47,7 @@ jobs:
               libxfixes3 \
               libxrandr2 \
               libgbm1 \
-              libasound2t64 \  # Исправленный пакет для Ubuntu 24.04
+              libasound2t64 \
               libpango-1.0-0 \
               libpangocairo-1.0-0 \
               libcairo2 \
@@ -55,7 +55,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install playwright pytest-playwright
           python -m playwright install --with-deps chromium
