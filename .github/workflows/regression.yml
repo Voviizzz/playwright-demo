@@ -79,8 +79,19 @@ jobs:
           curl -I https://www.saucedemo.com/
           curl -I https://www.saucedemo.com/inventory.html
       - name: Run tests
-        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }}
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} --headless true
         env:
           ENV: ${{ env.ENV }}
-          AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
-          AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
+          CI: "true"  # Явно помечаем CI окружение
+          PLAYWRIGHT_DEBUG: "pw:api"  # Включаем отладочный режим
+    
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ci-artifacts
+          path: |
+            *.png
+            *.har
+            *.zip
+            playwright-log.txt
