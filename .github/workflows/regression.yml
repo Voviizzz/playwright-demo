@@ -12,8 +12,12 @@ on:
 
 jobs:
   playwright:
-    name: Regression tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04  # Переключитесь на Ubuntu 22.04
+    steps:
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
     env:
       AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
       AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
