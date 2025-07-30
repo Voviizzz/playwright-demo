@@ -15,9 +15,9 @@ class Main(Base):
         self.open("")
     
     # Проверяем наличие полей ввода
-        username_field = self.page.locator(LoginPageLocators.USER_NAME)
-        password_field = self.page.locator(LoginPageLocators.PASSWORD)
-        login_button = self.page.locator(LoginPageLocators.LOGIN_BUTTON)
+        username_field = self.page.locator(Auth.USERNAME_INPUT)
+        password_field = self.page.locator(Auth.PASSWORD_INPUT)
+        login_button = self.page.locator(Auth.LOGIN_BTN)
     
         print(f"Username field visible: {username_field.is_visible()}")
         print(f"Password field visible: {password_field.is_visible()}")
