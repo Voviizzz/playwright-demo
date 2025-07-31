@@ -18,13 +18,10 @@ class Main(Base):
         self.open("")
     
     # Проверяем наличие полей ввода
-        print(f"Using login: {os.getenv('AUTH_LOGIN')}")
-        print(f"Using password: {os.getenv('AUTH_PASSWORD')}")
-        
         username_field = self.page.locator(Auth.USERNAME_INPUT)
         password_field = self.page.locator(Auth.PASSWORD_INPUT)
         login_button = self.page.locator(Auth.LOGIN_BTN)
- 
+    
         print(f"Username field visible: {username_field.is_visible()}")
         print(f"Password field visible: {password_field.is_visible()}")
         print(f"Login button visible: {login_button.is_visible()}")

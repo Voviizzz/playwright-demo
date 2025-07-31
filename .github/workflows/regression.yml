@@ -1,0 +1,97 @@
+name: TestRegression
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        default: "prod"
+      arguments:
+        required: false
+        default: "-m regression"
+
+jobs:
+  playwright:
+    name: Regression tests
+    runs-on: ubuntu-24.04
+    env:
+      AUTH_LOGIN: ${{ secrets.AUTH_LOGIN }}
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
+    
+    strategy:
+      matrix:
+        browser: [chromium]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+              libnss3 \
+              libnspr4 \
+              libatk1.0-0 \
+              libatk-bridge2.0-0 \
+              libcups2 \
+              libdrm2 \
+              libxkbcommon0 \
+              libxcomposite1 \
+              libxdamage1 \
+              libxfixes3 \
+              libxrandr2 \
+              libgbm1 \
+              libasound2t64 \
+              libpango-1.0-0 \
+              libpangocairo-1.0-0 \
+              libcairo2 \
+              libgtk-3-0
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install playwright pytest-playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Set environment variables
+        id: set_env
+        run: |
+          if [ "${{github.event_name}}" = "schedule" ]; then
+            args="-m regression"
+            ENV="prod"
+          else
+            ENV='${{github.event.inputs.environment}}'
+            args='${{github.event.inputs.arguments}}'
+          fi
+          echo "ENV=$ENV" >> $GITHUB_ENV
+          echo "ARGS=$args" >> $GITHUB_ENV
+          echo "env_name=$ENV" >> $GITHUB_OUTPUT
+
+      - name: Test site availability
+        run: |
+          curl -I https://www.saucedemo.com/
+          curl -I https://www.saucedemo.com/inventory.html
+      - name: Run tests
+        run: pytest ${{ env.ARGS }} --bn ${{ matrix.browser }} 
+        env:
+          ENV: ${{ env.ENV }}
+          CI: "true"  # Явно помечаем CI окружение
+          PLAYWRIGHT_DEBUG: "pw:api"  # Включаем отладочный режим
+    
+      - name: Upload debug artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts
+          path: |
+            *.png
+            *.har
+            *.zip
+            playwright-log.txt
